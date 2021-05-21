@@ -21,6 +21,26 @@ class _DetailScreenState extends State<DetailScreen> {
 
   List<String>? _listEmailStrings;
 
+  // Fetching the image size from the image file
+  Future<void> _getImageSize(File imageFile) async {
+    final Completer<Size> completer = Completer<Size>();
+
+    final Image image = Image.file(imageFile);
+    image.image.resolve(const ImageConfiguration()).addListener(
+      ImageStreamListener((ImageInfo info, bool _) {
+        completer.complete(Size(
+          info.image.width.toDouble(),
+          info.image.height.toDouble(),
+        ));
+      }),
+    );
+
+    final Size imageSize = await completer.future;
+    setState(() {
+      _imageSize = imageSize;
+    });
+  }
+
   // To detect the email addresses present in an image
   void _recognizeEmails() async {
     _getImageSize(File(_imagePath));
@@ -52,26 +72,6 @@ class _DetailScreenState extends State<DetailScreen> {
 
     setState(() {
       _listEmailStrings = emailStrings;
-    });
-  }
-
-  // Fetching the image size from the image file
-  Future<void> _getImageSize(File imageFile) async {
-    final Completer<Size> completer = Completer<Size>();
-
-    final Image image = Image.file(imageFile);
-    image.image.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener((ImageInfo info, bool _) {
-        completer.complete(Size(
-          info.image.width.toDouble(),
-          info.image.height.toDouble(),
-        ));
-      }),
-    );
-
-    final Size imageSize = await completer.future;
-    setState(() {
-      _imageSize = imageSize;
     });
   }
 

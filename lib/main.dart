@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'camera_screen.dart';
 
+// Global variable for storing the list of cameras available
 List<CameraDescription> cameras = [];
 
 Future<void> main() async {
