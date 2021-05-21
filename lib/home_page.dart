@@ -2,6 +2,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mlkit_vision/main.dart';
 
+import 'detail_screen.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -13,8 +15,7 @@ class _HomePageState extends State<HomePage> {
   void initializeCamera() async {
     final CameraController cameraController = CameraController(
       cameras[0],
-      ResolutionPreset.medium,
-      // imageFormatGroup: ImageFormatGroup.jpeg,
+      ResolutionPreset.high,
     );
     _controller = cameraController;
 
@@ -83,13 +84,15 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () async {
                         await _takePicture().then((String? path) {
                           if (path != null) {
-                            print('The image stored path: $path');
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => DetailScreen(path),
-                            //   ),
-                            // );
+                            // print('The image stored path: $path');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailScreen(
+                                  imagePath: path,
+                                ),
+                              ),
+                            );
                           } else {
                             print('Image path not found!');
                           }
