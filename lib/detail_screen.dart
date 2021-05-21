@@ -21,18 +21,23 @@ class _DetailScreenState extends State<DetailScreen> {
 
   List<String>? _listEmailStrings;
 
+  // To detect the email addresses present in an image
   void _recognizeEmails() async {
     _getImageSize(File(_imagePath));
 
+    // Creating an InputImage object using the image path
     final inputImage = InputImage.fromFilePath(_imagePath);
+    // Retrieving the RecognisedText from the InputImage
     final text = await _textDetector.processImage(inputImage);
 
+    // Pattern of RegExp for matching a general email address
     String pattern =
         r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
     RegExp regEx = RegExp(pattern);
 
     List<String> emailStrings = [];
 
+    // Finding and storing the text String(s) and the TextElement(s)
     for (TextBlock block in text.textBlocks) {
       for (TextLine line in block.textLines) {
         print('text: ${line.lineText}');
@@ -50,6 +55,7 @@ class _DetailScreenState extends State<DetailScreen> {
     });
   }
 
+  // Fetching the image size from the image file
   Future<void> _getImageSize(File imageFile) async {
     final Completer<Size> completer = Completer<Size>();
 
@@ -72,6 +78,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     _imagePath = widget.imagePath;
+    // Initializing the text detector
     _textDetector = GoogleMlKit.vision.textDetector();
     _recognizeEmails();
     super.initState();
@@ -79,6 +86,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   void dispose() {
+    // Disposing the text detector when not used anymore
     _textDetector.close();
     super.dispose();
   }
@@ -160,6 +168,8 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 }
 
+// Helps in painting the bounding boxes around the recognized
+// email addresses in the picture
 class TextDetectorPainter extends CustomPainter {
   TextDetectorPainter(this.absoluteImageSize, this.elements);
 

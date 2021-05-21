@@ -4,15 +4,16 @@ import 'package:flutter_mlkit_vision/main.dart';
 
 import 'detail_screen.dart';
 
-class HomePage extends StatefulWidget {
+class CameraScreen extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _CameraScreenState createState() => _CameraScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _CameraScreenState extends State<CameraScreen> {
   late final CameraController _controller;
 
-  void initializeCamera() async {
+  // Initializes camera controller to preview on screen
+  void _initializeCamera() async {
     final CameraController cameraController = CameraController(
       cameras[0],
       ResolutionPreset.high,
@@ -27,6 +28,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // Takes picture with the selected device camera, and
+  // returns the image path
   Future<String?> _takePicture() async {
     if (!_controller.value.isInitialized) {
       print("Controller is not initialized");
@@ -41,8 +44,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     try {
+      // Turning off the camera flash
       _controller.setFlashMode(FlashMode.off);
+      // Returns the image in cross-platform file abstraction
       final XFile file = await _controller.takePicture();
+      // Retrieving the path
       imagePath = file.path;
     } on CameraException catch (e) {
       print("Camera Exception: $e");
@@ -54,12 +60,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    initializeCamera();
+    _initializeCamera();
     super.initState();
   }
 
   @override
   void dispose() {
+    // dispose the camera controller when navigated
+    // to a different page
     _controller.dispose();
     super.dispose();
   }
@@ -82,9 +90,10 @@ class _HomePageState extends State<HomePage> {
                       icon: Icon(Icons.camera),
                       label: Text("Click"),
                       onPressed: () async {
+                        // If the returned path is not null navigate
+                        // to the DetailScreen
                         await _takePicture().then((String? path) {
                           if (path != null) {
-                            // print('The image stored path: $path');
                             Navigator.push(
                               context,
                               MaterialPageRoute(
